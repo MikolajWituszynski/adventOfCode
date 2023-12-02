@@ -12,15 +12,34 @@ public class trebuchet {
 
 
         List<Integer> listOfDigits = new ArrayList<Integer>();
-        File file = new File("input.txt");
+        File file = new File("inputDayOne.txt");
         BufferedReader reader = null;
+        HashMap<String, String> spelledDigits = new HashMap<>() {{
+            put("one", "o1e");
+            put("two", "t2o");
+            put("three", "t3e");
+            put("four", "f4r");
+            put("five", "f5e");
+            put("six", "s6x");
+            put("seven", "s7n");
+            put("eight", "e8t");
+            put("nine", "n9e");
+        }};
 
         try {
             reader = new BufferedReader(new FileReader(file));
             String text = null;
-            Integer sum = 0;
+            String allDigToStr =null;
+            int sum = 0;
             while ((text = reader.readLine()) != null) {
-                char[] line = text.toCharArray();
+                String newText = text;
+                StringBuilder allDigits = new StringBuilder();
+               List<String> listOfDig = new ArrayList<>();
+                for (Map.Entry<String, String> entry : spelledDigits.entrySet()) {
+                    newText = newText.replaceAll(entry.getKey(),entry.getValue());
+                }
+                System.out.println("text: " + newText);
+                char[] line = newText.toCharArray();
                 StringBuilder sb = new StringBuilder();
                 Map<Integer, Character> digitsInLine = new LinkedHashMap<>();
                 Integer counter = 0;
@@ -41,7 +60,9 @@ public class trebuchet {
                 Character last = lastEntry.getValue();
 
                 sb.append(first);
+                System.out.println("first: " + first);
                 sb.append(last);
+                System.out.println("last: " + last);
 
                 Integer digitFromLine = new Integer(sb.toString());
 
