@@ -1,10 +1,7 @@
 package dayTwo;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,28 +14,26 @@ public class dayTwo {
         File file = new File("inputDayTwo.txt");
         BufferedReader reader = null;
         try {
-            int counterForText = 0;
+            int powerOfCubes = 0;
 
             reader = new BufferedReader(new FileReader(file));
             String text = null;
-            int counter = 0;
+            int powerOfLine = 0;
             while ((text = reader.readLine()) != null) {
-                counter++;
-                System.out.println("counter: " + counter);
-                boolean isBlue = countOccurancesOfCubesByColor(text,"blue",14);
-                boolean isRed = countOccurancesOfCubesByColor(text,"red",12);
-                boolean isGreen = countOccurancesOfCubesByColor(text,"green",13);
 
-                if(isBlue && isRed && isGreen) {
-                    System.out.println("counter for text: " + counterForText);
-                    counterForText += counter;
-                    System.out.println("counter for text after sum: " + counterForText);
 
-                }
+                int blueValue = countOccurancesOfCubesByColor(text,"blue");
+                System.out.println("highest Blue: " + blueValue);
+                int redValue = countOccurancesOfCubesByColor(text,"red");
+                System.out.println("highest red: " + redValue);
+                int greenValue = countOccurancesOfCubesByColor(text,"green");
+                System.out.println("highest green: " + greenValue);
+                powerOfLine = blueValue * redValue * greenValue;
+                powerOfCubes += powerOfLine;
 
+                System.out.println("power Of Line: " + powerOfLine);
             }
-
-            System.out.println(counterForText);
+            System.out.println(powerOfCubes);
 
     } catch (IOException e) {
         e.printStackTrace();
@@ -53,16 +48,19 @@ public class dayTwo {
 
     }
 
-    static boolean countOccurancesOfCubesByColor(String line, String color, int limit) {
+    static int countOccurancesOfCubesByColor(String line, String color) {
         Pattern pattern = Pattern.compile("(\\d+) " + Pattern.quote(color));
         Matcher matcher = pattern.matcher(line);
+        List<Integer> values = new ArrayList<>();
         while (matcher.find()) {
             int count = Integer.parseInt(matcher.group(1));
-            if (count > limit) {
-                return false; // Found an instance exceeding the limit
-            }
+            values.add(count);
         }
-        return true; // No instances exceeding the limit
+        System.out.println("array: " + values);
+        Collections.sort(values);
+        int highestValue = values.get(values.size()-1);
+        System.out.println("Highest value: " + highestValue);
+        return highestValue; // No instances exceeding the limit
     }
 
 }
