@@ -4,57 +4,85 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-// check for symbols and digits in line and at the same time
-// first line check for occurances, then second line check if any symbol has index 1 bigger or one smaller than first or last index of digits from first line
-//["dog"]
-//["cat"]
-//Symbols map
-//{'*',2}
-//Digits map
-//{'1',5}
-// jesli klucz symbols ma wartosc
 
-//.........398.............551.....................452..................712.996.................646.40...1.....875..958.553...................
-//...................................661..-844......*.../781...835..#163....*.......698.239.........*.....*.............*............*57......
 
 public class dayThree {
     public static void main(String[] args) throws FileNotFoundException {
-    readLinesFromInput(new File("inputDayThree.txt"));
-    }
-
-   static String readLinesFromInput(File file) throws FileNotFoundException {
-
         BufferedReader reader = null;
         try {
-            int powerOfCubes = 0;
-            reader = new BufferedReader(new FileReader(file));
+            reader = new BufferedReader(new FileReader("inputDayThree.txt"));
             String line1 = null;
-            String line2 = null;
-            int powerOfLine = 0;
-            int counter = 0;
-            Queue<String> queue = new LinkedList<>();
-            String tempLine = null;
-            List<String> lines = new ArrayList<>();
+            List<Integer> validNumbers = new ArrayList<>();
 
+            List<String> lines = new ArrayList<>();
             while ((line1 = reader.readLine()) != null) {
                 lines.add(line1);
             }
-
+            int lineCount = lines.size();
             System.out.println("lines: " + lines);
+            String previousLine = null;
+            String currentLine = null;
+            String nextLine = null;
+            int sumOfValidNumbers = 0;
+            for (int i = 0; i < lineCount; i++) {
+                var line = lines.get(i);
+                if (i > 0) {
+                    previousLine = lines.get(i - 1);
+                }
+                if (i < lineCount - 1) {
+                    nextLine = lines.get(i + 1);
+                }
+                currentLine = line;
+                System.out.println("current Line: " + currentLine);
+                Pattern numberPattern = Pattern.compile("\\d+");
 
-            for(int i = 0; i<lines.size(); i++) {
-                String previousLine = null;
-                String currentLine = null;
-                String nextLine = null;
+                Matcher matcher = numberPattern.matcher(currentLine);
+                while (matcher.find()) {
+                if(isValidPartNumber(matcher,currentLine,previousLine,nextLine)) {
+                    validNumbers.add(Integer.parseInt(matcher.group()));
+                    sumOfValidNumbers += Integer.parseInt(matcher.group());
+                }}
             }
 
+            System.out.println("sum: " + sumOfValidNumbers);
+            System.out.println("valid numbers: " + validNumbers);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    return "test";
+
+    }
+
+    static boolean isValidPartNumber(Matcher matcher, String crLine, String prLine, String nxtLine) {
+        int sINum = matcher.start();
+        int eINum = matcher.end() - 1; // End index should be inclusive
+
+        // Check around the number in the current line
+        int begin = Math.max(0, sINum - 1);
+        int end = Math.min(eINum + 1, crLine.length() - 1);
+        for (int i = begin; i <= end; i++) {
+            if (isSymbol(crLine.charAt(i))) {
+                return true;
+            }
+            // Check diagonally in previous and next lines
+            if (prLine != null && i < prLine.length() && isSymbol(prLine.charAt(i))) {
+                return true;
+            }
+            if (nxtLine != null && i < nxtLine.length() && isSymbol(nxtLine.charAt(i))) {
+                return true;
+            }
+        }
+        // Check directly above and below the number
+        if (prLine != null && sINum < prLine.length() && isSymbol(prLine.charAt(sINum))) {
+            return true;
+        }
+        if (nxtLine != null && sINum < nxtLine.length() && isSymbol(nxtLine.charAt(sINum))) {
+            return true;
+        }
+        return false;
     }
 
 
-
-
+    static private boolean isSymbol(char c) {
+        return !Character.isDigit(c) && c != '.';
+    }
 }
