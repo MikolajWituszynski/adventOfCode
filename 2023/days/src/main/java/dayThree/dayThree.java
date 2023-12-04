@@ -5,65 +5,67 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 public class dayThree {
     public static void main(String[] args) throws FileNotFoundException {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader("inputDayThree.txt"));
-            String line1 = null;
             List<Integer> validNumbers = new ArrayList<>();
-
             List<String> lines = new ArrayList<>();
-            while ((line1 = reader.readLine()) != null) {
-                lines.add(line1);
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
             }
+
             int lineCount = lines.size();
             System.out.println("lines: " + lines);
-            String previousLine = null;
-            String currentLine = null;
-            String nextLine = null;
             int sumOfValidNumbers = 0;
+            int sumOfGearRatios = 0;
             for (int i = 0; i < lineCount; i++) {
-                var line = lines.get(i);
-                if (i > 0) {
-                    previousLine = lines.get(i - 1);
-                }
-                if (i < lineCount - 1) {
-                    nextLine = lines.get(i + 1);
-                }
-                currentLine = line;
-                System.out.println("current Line: " + currentLine);
-                Pattern numberPattern = Pattern.compile("\\d+");
+                String currentLine = lines.get(i);
+                String previousLine = i > 0 ? lines.get(i - 1) : null;
+                String nextLine = i < lineCount - 1 ? lines.get(i + 1) : null;
 
-                Matcher matcher = numberPattern.matcher(currentLine);
+                System.out.println("current Line: " + currentLine);
+
+                Matcher matcher = Pattern.compile("\\d+").matcher(currentLine);
                 while (matcher.find()) {
-                if(isValidPartNumber(matcher,currentLine,previousLine,nextLine)) {
-                    validNumbers.add(Integer.parseInt(matcher.group()));
-                    sumOfValidNumbers += Integer.parseInt(matcher.group());
-                }}
+                    if (isValidPartNumber(matcher, currentLine, previousLine, nextLine)) {
+                        validNumbers.add(Integer.parseInt(matcher.group()));
+                        sumOfValidNumbers += Integer.parseInt(matcher.group());
+                    }
+                }
+
+                sumOfGearRatios +=  calculateGearRatios(currentLine, previousLine, nextLine);
+
             }
 
+            System.out.println("Total sum of gear ratios: " + sumOfGearRatios);
             System.out.println("sum: " + sumOfValidNumbers);
             System.out.println("valid numbers: " + validNumbers);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-
     }
 
     static boolean isValidPartNumber(Matcher matcher, String crLine, String prLine, String nxtLine) {
         int sINum = matcher.start();
         int eINum = matcher.end() - 1; // End index should be inclusive
 
-        // Check around the number in the current line
         int begin = Math.max(0, sINum - 1);
         int end = Math.min(eINum + 1, crLine.length() - 1);
         for (int i = begin; i <= end; i++) {
             if (isSymbol(crLine.charAt(i))) {
                 return true;
             }
-            // Check diagonally in previous and next lines
             if (prLine != null && i < prLine.length() && isSymbol(prLine.charAt(i))) {
                 return true;
             }
@@ -71,7 +73,6 @@ public class dayThree {
                 return true;
             }
         }
-        // Check directly above and below the number
         if (prLine != null && sINum < prLine.length() && isSymbol(prLine.charAt(sINum))) {
             return true;
         }
@@ -81,8 +82,52 @@ public class dayThree {
         return false;
     }
 
-
     static private boolean isSymbol(char c) {
         return !Character.isDigit(c) && c != '.';
+    }
+
+    static int calculateGearRatios(String currentLine, String previousLine, String nextLine) {
+        int gearRatioSum = 0;
+        for (int j = 0; j < currentLine.length(); j++) {
+            if (currentLine.charAt(j) == '*') {
+                List<Integer> adjacentNumbers = new ArrayList<>();
+
+                // Check horizontally, vertically, and diagonally adjacent positions
+                for (int dy = -1; dy <= 1; dy++) {
+                    for (int dx = -1; dx <= 1; dx++) {
+                        if (dx == 0 && dy == 0) continue; // Skip the gear itself
+
+                        int checkY = j + dy;
+                        int checkX = j + dx;
+
+                        String lineToCheck = dy == 0 ? currentLine : (dy == -1 ? previousLine : nextLine);
+                        if (lineToCheck != null && checkX >= 0 && checkX < lineToCheck.length()) {
+                            char charAtPos = lineToCheck.charAt(checkX);
+                            if (Character.isDigit(charAtPos)) {
+                                adjacentNumbers.add(Character.getNumericValue(charAtPos));
+                            }
+                        }
+                    }
+                }
+
+                // Calculate gear ratio if exactly two adjacent numbers are found
+                if (adjacentNumbers.size() == 2) {
+                    gearRatioSum += adjacentNumbers.get(0) * adjacentNumbers.get(1);
+                }
+            }
+        }
+        return gearRatioSum;
+    }
+
+
+    static List<Integer> findNumbersAt(Pattern pattern, String line, int index) {
+        List<Integer> numbers = new ArrayList<>();
+        Matcher matcher = pattern.matcher(line);
+        while (matcher.find()) {
+            if (matcher.start() <= index && matcher.end() - 1 >= index) {
+                numbers.add(Integer.parseInt(matcher.group()));
+            }
+        }
+        return numbers;
     }
 }
