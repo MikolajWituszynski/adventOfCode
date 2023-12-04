@@ -70,7 +70,9 @@ public class dayFour {
         } else {
             System.out.println("points in line: " + numOfWins*2);
 
-            return numOfWins*2;
+            return (int) Math.pow(2, numOfWins-1);
         }
     }
+
+
 }
