@@ -1,4 +1,4 @@
-package AoC_5;
+package AoC_05;
 
 public class AoC_5 {
 }
