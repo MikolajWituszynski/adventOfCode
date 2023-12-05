@@ -1,9 +1,9 @@
-package dayOne;
+package AoC_01;
 
 import java.io.*;
 import java.util.*;
 
-public class trebuchet {
+public class AoC_01 {
     public static void main(String[] args) {
         //read each line
         //in each line check for first and last digit

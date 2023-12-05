@@ -1,11 +1,11 @@
-package dayTwo;
+package AoC_02;
 
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class dayTwo {
+public class AoC_02 {
     public static void main(String[] args) throws FileNotFoundException {
         //Game 1
         //{7: blue, 6: green, 8: red},

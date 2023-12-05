@@ -1,11 +1,11 @@
-package dayThree;
+package AoC_03;
 
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class dayThree {
+public class AoC_03 {
     public static void main(String[] args) throws FileNotFoundException {
         BufferedReader reader = null;
         try {
