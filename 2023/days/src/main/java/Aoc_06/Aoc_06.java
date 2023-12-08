@@ -1,51 +1,54 @@
 package Aoc_06;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class Aoc_06
-{
+public class Aoc_06 {
 
     public static void main(String[] args) {
-            int timeFixed = 7;
-            int distanceRecord = 9;
-            int startingTime = timeFixed;
-            Boat boatOne = new Boat(timeFixed);
-            List<Integer> distances = new ArrayList<>();
-            for(int i = 0; i <= timeFixed; i++) {
-                System.out.println("time to hold: " + i + "time: " + startingTime);
-                int distance = boatOne.speed(startingTime,i);
-                System.out.println("distance: " + distance);
-                if(distance >  distanceRecord) {
-                    distances.add(distance);
+        BufferedReader reader = null;
+        List<Integer> time = new ArrayList<>();
+        List<Integer> distance = new ArrayList<>();
+        try {
+            reader = new BufferedReader(new FileReader("inputDaySix.txt"));
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                Pattern pattern = Pattern.compile("\\d+");
+                Matcher matcher = pattern.matcher(line);
+                while (matcher.find()) {
+                    if (line.startsWith("Time: ")) {
+                        time.add(Integer.parseInt(matcher.group()));
+                    } else if (line.startsWith("Distance: ")) {
+                        distance.add(Integer.parseInt(matcher.group()));
+                    }
                 }
-                System.out.println("disnces update: " + distances);
-
-                startingTime--;
             }
-        System.out.println("distance: " + distances);
-            int waysToBeatRecord = distances.size();
-        System.out.println("Ways to beat record: " + waysToBeatRecord);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        long totalWays = 1;
+        for (int i = 0; i < time.size(); i++) {
+            int ways = waysToBeatRecord(time.get(i), distance.get(i));
+            totalWays *= ways;
+        }
+        System.out.println("Total Ways: " + totalWays);
     }
 
-    public static class Boat {
-
-        int time;
-
-        public Boat(int time) {
-
-            this.time = time;
+    public static int waysToBeatRecord(int totalTime, int recordDistance) {
+        int ways = 0;
+        for (int i = 0; i < totalTime; i++) {
+            int travelTime = totalTime - i;
+            int distance = i * travelTime;
+            if (distance > recordDistance) {
+                ways++;
+            }
         }
-
-        public int speed(int time, int distance) {
-            return distance*time;
-        }
-
-        public int waysToBeatRecord() {
-
-        }
-
-
+        return ways;
     }
-
 }
