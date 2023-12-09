@@ -13,6 +13,8 @@ public class Aoc_06 {
         BufferedReader reader = null;
         List<Integer> time = new ArrayList<>();
         List<Integer> distance = new ArrayList<>();
+        StringBuilder timeTwo = new StringBuilder();
+        StringBuilder distanceTwo = new StringBuilder();
         try {
             reader = new BufferedReader(new FileReader("inputDaySix.txt"));
             String line;
@@ -23,28 +25,38 @@ public class Aoc_06 {
                 while (matcher.find()) {
                     if (line.startsWith("Time: ")) {
                         time.add(Integer.parseInt(matcher.group()));
+                        timeTwo.append(matcher.group());
                     } else if (line.startsWith("Distance: ")) {
                         distance.add(Integer.parseInt(matcher.group()));
+                        distanceTwo.append(matcher.group());
+
                     }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        System.out.println("Time string: " + timeTwo);
+        System.out.println("Disatnce string: " + distanceTwo);
         long totalWays = 1;
         for (int i = 0; i < time.size(); i++) {
             int ways = waysToBeatRecord(time.get(i), distance.get(i));
             totalWays *= ways;
         }
+
+        long timeTwoInt = Long.parseLong(timeTwo.toString());
+        long distaneTwoInt = Long.parseLong(distanceTwo.toString());
+        //partTwo
+        long totalWaysTwo = waysToBeatRecord(timeTwoInt,distaneTwoInt);
         System.out.println("Total Ways: " + totalWays);
+        System.out.println("Total part Two: " + totalWaysTwo);
     }
 
-    public static int waysToBeatRecord(int totalTime, int recordDistance) {
+    public static int waysToBeatRecord(long totalTime, long recordDistance) {
         int ways = 0;
         for (int i = 0; i < totalTime; i++) {
-            int travelTime = totalTime - i;
-            int distance = i * travelTime;
+            long travelTime = totalTime - i;
+           long distance = i * travelTime;
             if (distance > recordDistance) {
                 ways++;
             }
