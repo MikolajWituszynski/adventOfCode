@@ -63,6 +63,10 @@ public class AoC_08 {
     }
 
 
+       public static int findZByFollowingInstruction(StringBuilder instruction, HashMap cords) {
+        for(int i = 0; i < instruction.length(); i++) {
 
+        }
+       }
 
 }
